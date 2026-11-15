@@ -8,11 +8,11 @@ IMAGE_SIZE = 512
 NUM_SAMPLES_PER_TEXTURE = 5  # Liczba wariantów każdego materiału
 
 os.makedirs(OUT_DIR, exist_ok=True)
-device = "cpu"
+device = "cuda"
 
 # Ładujemy cały pipeline (potrzebujemy go do wygenerowania obrazka z promptu)
 pipeline = FluxPipeline.from_pretrained(
-    FLUX_PATH, torch_dtype=torch.float32
+    FLUX_PATH, torch_dtype=torch.bfloat16
 ).to(device)
 
 vae = pipeline.vae
@@ -52,7 +52,7 @@ for tex in textures:
         
         # 2. Preprocessing z obrazka PIL do tensora (wymagane przez diffusers)
         image_tensor = pipeline.image_processor.preprocess(image).to(
-            device=device, dtype=torch.torch.float32
+            device=device, dtype=torch.torch.bfloat16
         )
 
         # 3. Właściwa kompresja VAE do Latent Space
